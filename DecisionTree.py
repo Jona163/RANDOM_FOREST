@@ -41,3 +41,18 @@ class DecisionTree:
 
         # find the best split
         best_feature, best_thresh = self._best_split(X, y, feat_idxs)
+
+        # create child nodes
+        left_idxs, right_idxs = self._split(X[:, best_feature], best_thresh)
+        left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth+1)
+        right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth+1)
+        return Node(best_feature, best_thresh, left, right)
+
+
+    def _best_split(self, X, y, feat_idxs):
+        best_gain = -1
+        split_idx, split_threshold = None, None
+
+        for feat_idx in feat_idxs:
+            X_column = X[:, feat_idx]
+            thresholds = np.unique(X_column)
