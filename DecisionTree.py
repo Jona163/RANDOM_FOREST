@@ -84,3 +84,17 @@ class DecisionTree:
         n_l, n_r = len(left_idxs), len(right_idxs)
         e_l, e_r = self._entropy(y[left_idxs]), self._entropy(y[right_idxs])
         child_entropy = (n_l/n) * e_l + (n_r/n) * e_r
+
+        # calculate the IG
+        information_gain = parent_entropy - child_entropy
+        return information_gain
+
+    def _split(self, X_column, split_thresh):
+        left_idxs = np.argwhere(X_column <= split_thresh).flatten()
+        right_idxs = np.argwhere(X_column > split_thresh).flatten()
+        return left_idxs, right_idxs
+
+    def _entropy(self, y):
+        hist = np.bincount(y)
+        ps = hist / len(y)
+        return -np.sum([p * np.log(p) for p in ps if p>0])
